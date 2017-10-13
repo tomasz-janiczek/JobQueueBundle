@@ -20,9 +20,8 @@ env:
     - deps=standard
 
 install:
-  - composer self-update -q
-  - if [ "$deps" = "standard" ]; then composer --prefer-stable --prefer-dist -n update; fi;
-  - if [ "$deps" = "low" ]; then composer --prefer-lowest -n --prefer-stable --prefer-dist update; fi;
+  - if [ "$deps" = "standard" ]; then composer config -g github-protocols https && composer --prefer-stable --prefer-dist -n update; fi;
+  - if [ "$deps" = "low" ]; then composer config -g github-protocols https && composer --prefer-lowest -n --prefer-stable --prefer-dist update; fi;
 
 
 script: bin/phpunit
