@@ -53,10 +53,12 @@ class JobConsumer implements ConsumerInterface, ContainerAwareInterface
                 if ($job instanceof ConsoleCommandJob) {
                     $command = $job->getCommand();
                 }
+                $q = $job->getTopic();
             }
 
             $exitCode = null;
             $output = $e->getMessage();
+
             if ($e instanceof JobFailedException) {
                 $exitCode = intval($e->getExitCode());
             }
@@ -69,12 +71,13 @@ class JobConsumer implements ConsumerInterface, ContainerAwareInterface
                 );
             }
 
-            $this->container->get('logger')->error(sprintf('Job Failed: %s', $command), [
+            $this->container->get('logger')->error(sprintf('Job Failed from queue %s', $q), [
                 'exception' => get_class($e),
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
                 'trace' => $e->getTraceAsString(),
+                'command' => $command
             ]);
 
             return ConsumerInterface::MSG_REJECT;
